@@ -1,1065 +1,759 @@
-# ETL DRE (Demostração Resultados do Exercício)
+# ETL Income Statement
 
-## Tabela de Conteúdo
+## Table of Contents
 
-- [Overview do Projeto](#overview-do-projeto)
-- [O que é uma DRE?](#o-que-é-uma-dre)
-- [Principais etapas de um ETL](#principais-etapas-de-um-etl)
-- [Tabelas Fato e Dimensão](#tabelas-fato-e-dimensão)
-- [Conhecendo os Dados do Projeto](#conhecendo-os-dados-do-projeto)
-- [Criando o ambiente virtual](#criando-o-ambiente-virtual)
-- [Instalando as bibliotecas necessárias](#instalando-as-bibliotecas-necessárias)
-- [Configurando o Jupyter Notebook](#configurando-o-jupyter-notebook)
-- [Configurando o Jupyter Lab](#configurando-o-jupyter-lab)
-- [Conectando no Banco de Dados SQL Server](#conectando-no-banco-de-dados-sql-server)
-- [Primeira Etapa do ETL: Extract](#primeira-etapa-do-etl-extract)
-- [Segunda Etapa do ETL: Transform](#segunda-etapa-do-etl-transform)
-- [Terceira Etapa do ETL: Load](#terceira-etapa-do-etl-load)
-- [Criando a classe ETL](#criando-a-classe-etl)
-- [Criando o arquivo ETL.py](#criando-o-arquivo-etlpy)
-- [Criando o arquivo requirements.txt](#criando-o-arquivo-requirementstxt)
-- [Automatizando o ETL com o agendador de tarefas do Windows](#automatizando-o-etl-com-o-agendador-de-tarefas-do-windows)
-- [Conectando Power BI no banco de dados](#conectando-power-bi-no-banco-de-dados)
-- [Modelagem e Relacionamentos do Modelo](#modelagem-e-relacionamentos-do-modelo)
-- [Análise DRE](#análise-dre)
-- [Conclusão e Próximos Passos](#conclusão-e-próximos-passos)
+- [Project Overview](#project-overview)
+- [What is an Income Statement?](#what-is-an-income-statement)
+- [Key Steps of an ETL](#key-steps-of-an-etl)
+- [Fact and Dimension Tables](#fact-and-dimension-tables)
+- [Understanding the Project Data](#understanding-the-project-data)
+- [Creating the Virtual Environment](#creating-the-virtual-environment)
+- [Installing Required Libraries](#installing-required-libraries)
+- [Configuring Jupyter Notebook](#configuring-jupyter-notebook)
+- [Configuring Jupyter Lab](#configuring-jupyter-lab)
+- [Connecting to the SQL Server Database](#connecting-to-the-sql-server-database)
+- [First ETL Step: Extract](#first-etl-step-extract)
+- [Second ETL Step: Transform](#second-etl-step-transform)
+- [Third ETL Step: Load](#third-etl-step-load)
+- [Creating the ETL Class](#creating-the-etl-class)
+- [Creating the ETL.py File](#creating-the-etlpy-file)
+- [Creating the requirements.txt File](#creating-the-requirementstxt-file)
+- [Automating the ETL with Windows Task Scheduler](#automating-the-etl-with-windows-task-scheduler)
+- [Connecting Power BI to the Database](#connecting-power-bi-to-the-database)
+- [Modeling and Relationships of the Model](#modeling-and-relationships-of-the-model)
+- [Income Statement Analysis](#income-statement-analysis)
+- [Conclusion and Next Steps](#conclusion-and-next-steps)
 
+# Project Overview
 
-
-# Overview do Projeto
-
-> Muitas empresas, tanto no Brasil quanto ao redor do mundo, ainda estão
-> presas a métodos manuais para extrair e processar dados de seus
-> sistemas ERP. Imagine, por exemplo, a tarefa de criar um relatório
-> anual: o usuário precisa extrair um relatório para cada mês, tratar os
-> dados manualmente e, finalmente, consolidar 12 arquivos separados para
-> gerar o relatório anual. Agora, multiplique isso pelos últimos 5 anos.
-> O tempo e o esforço envolvidos são imensos, sem mencionar o risco de
-> erros manuais.
+> Many companies, both in Brazil and worldwide, are still stuck with manual methods to extract and process data from their ERP systems. Imagine, for example, the task of creating an annual report: the user needs to extract a report for each month, manually process the data, and finally consolidate 12 separate files to generate the annual report. Now, multiply that by the last 5 years. The time and effort involved are immense, not to mention the risk of manual errors.
 >
-> Para resolver esse desafio, desenvolvi um projeto que automatiza todo
-> esse processo. Utilizando Python, criei um pipeline de ETL (Extração,
-> Transformação e Carga) que, com apenas um clique, realiza todas as
-> etapas necessárias para gerar uma DRE (Demonstração do Resultado do
-> Exercício) a partir de relatórios em CSV.
+> To solve this challenge, I developed a project that automates this entire process. Using Python, I created an ETL (Extract, Transform, Load) pipeline that, with just one click, performs all the necessary steps to generate an Income Statement (DRE) from CSV reports.
 >
-> **Como Funciona:**
+> **How It Works:**
 
-1.  **Extração:** O script carrega automaticamente os dados financeiros
-    a partir dos arquivos CSV.
+1.  **Extraction:** The script automatically loads financial data from the CSV files.
 
-2.  **Transformação:** As regras de transformação são aplicadas para
-    garantir que os dados estejam consistentes e prontos para análise.
+2.  **Transformation:** Transformation rules are applied to ensure the data is consistent and ready for analysis.
 
-3.  **Carga:** Os dados transformados são armazenados em um banco de
-    dados relacional, centralizando as informações para fácil acesso e
-    gestão.
+3.  **Load:** The transformed data is stored in a relational database, centralizing the information for easy access and management.
 
-4.  **Visualização:** Um dashboard é desenvolvido em Power BI para
-    exibir os resultados.
+4.  **Visualization:** A dashboard is developed in Power BI to display the results.
 
-> **Vantagens:**
+> **Advantages:**
 
--   **Gestão Centralizada e Segura:** O banco de dados facilita a
-    manutenção e atualização das informações, garantindo integridade e
-    segurança dos dados.
+-   **Centralized and Secure Management:** The database facilitates the maintenance and updating of information, ensuring data integrity and security.
 
--   **Consultas Ágeis:** Com os dados estruturados, as consultas no
-    Power BI são mais rápidas, evitando longo tempos de espera ao
-    carregar os dados.
+-   **Faster Queries:** With structured data, queries in Power BI are quicker, avoiding long wait times when loading data.
 
--   **Escalabilidade:** A solução é facilmente escalável, suportando o
-    aumento no volume de dados sem comprometer o desempenho.
+-   **Scalability:** The solution is easily scalable, supporting increased data volumes without compromising performance.
 
--   **Maior Eficiência Operacional:** A automação reduz o tempo e o
-    esforço necessários para o tratamento dos dados, eliminando erros
-    manuais e aumentando a produtividade.
+-   **Increased Operational Efficiency:** Automation reduces the time and effort required for data processing, eliminating manual errors and increasing productivity.
 
-# O que é uma DRE?
+# What is an Income Statement?
 
-Quando falamos em gestão empresarial, a DRE (Demonstração do Resultado
-do Exercício), ou *[Income Statement]{.underline}* em inglês, é um dos
-relatórios mais cruciais. Afinal, toda empresa quer saber se suas
-operações estão gerando os resultados esperados. Enquanto o fluxo de
-caixa mostra quanto dinheiro a empresa tem em um determinado momento, a
-DRE mede o desempenho operacional.
+When we talk about business management, the Income Statement (DRE), or *Income Statement* in English, is one of the most crucial reports. After all, every company wants to know if its operations are generating the expected results. While the cash flow shows how much money the company has at a given time, the Income Statement measures operational performance.
 
-Existem duas formas principais de DRE: a Contábil e a Gerencial. Neste
-projeto, vou focar na DRE Gerencial, mas antes, vamos entender a
-principal diferença entre elas.
+There are two main types of Income Statements: Accounting and Managerial. In this project, I will focus on the Managerial Income Statement, but first, let's understand the main difference between them.
 
-**DRE Contábil:**
+**Accounting Income Statement:**
 
--   **Cumprimento de Exigências Legais:** A DRE Contábil é projetada
-    para atender às exigências fiscais e legais.
+-   **Compliance with Legal Requirements:** The Accounting Income Statement is designed to meet tax and legal requirements.
 
--   **Conformidade com Normas Contábeis:** Segue rigorosamente os
-    princípios contábeis, garantindo a transparência e a precisão
-    necessárias para stakeholders externos, como investidores e governo.
+-   **Compliance with Accounting Standards:** It strictly follows accounting principles, ensuring transparency and accuracy for external stakeholders such as investors and the government.
 
--   **Baseada em Partidas Dobradas:** Toda transação envolve um débito e
-    um crédito. Por exemplo, uma venda pode resultar no crédito de
-    receita e débito de caixa ou contas a receber, se a venda for a
-    prazo.
+-   **Based on Double-Entry Accounting:** Every transaction involves a debit and a credit. For example, a sale might result in a revenue credit and a cash or accounts receivable debit if the sale is on credit.
 
-**DRE Gerencial:**
+**Managerial Income Statement:**
 
--   **Foco na Gestão Interna:** Esta versão da DRE é destinada ao uso
-    interno, especialmente para gestores que precisam tomar decisões
-    rápidas e informadas.
+-   **Focus on Internal Management:** This version of the Income Statement is intended for internal use, especially for managers who need to make quick and informed decisions.
 
--   **Análise Direcionada:** Enfatiza as análises específicas que
-    auxiliam na gestão e na estratégia da empresa, sem a necessidade de
-    seguir as normas de débito e crédito.
+-   **Targeted Analysis:** It emphasizes specific analyses that help in business management and strategy without the need to follow debit and credit norms.
 
-# Principais etapas de um ETL
+# Key Steps of an ETL
 
-ETL (Extract, Transform, Load) é um processo que envolve a extração de
-dados de diversas fontes, a transformação desses dados para que fiquem
-prontos para análise e, finalmente, a carga deles em um banco de dados
-ou outro sistema de armazenamento.
+ETL (Extract, Transform, Load) is a process that involves extracting data from various sources, transforming that data to be ready for analysis, and finally loading it into a database or other storage system.
 
-No contexto deste projeto, as principais etapas seguem a estrutura
-tradicional de um processo de ETL:
+In the context of this project, the main steps follow the traditional structure of an ETL process:
 
-1.  **Carregamento dos Dados (Extract):**
+1.  **Data Loading (Extract):**
 
-    -   Leitura e armazenamento dos arquivos CSV em um banco de dados
-        SQL Server.
+    -   Reading and storing the CSV files in a SQL Server database.
 
-2.  **Transformação dos Dados (Transform):**
+2.  **Data Transformation (Transform):**
 
-    -   Implementação em Python das transformações e tratamentos que
-        anteriormente eram realizados no Power Query.
+    -   Implementing in Python the transformations and treatments that were previously performed in Power Query.
 
-3.  **Carga no Banco de Dados (Load):**
+3.  **Loading into the Database (Load):**
 
-    -   Inserção dos dados transformados no banco de dados SQL Server,
-        prontos para serem consumidos pelo Power BI.
+    -   Inserting the transformed data into the SQL Server database, ready to be consumed by Power BI.
 
-# Tabelas Fato e Dimensão
+# Fact and Dimension Tables
 
-Tabelas fato, são tabelas que armazenam o histórico de eventos do
-negócio, como vendas ou transações, geralmente possuem uma coluna de
-datas. Elas se conectam às tabelas dimensão através de **chaves
-estrangeiras** (campo em uma tabela que se refere à chave primária de
-outra tabela, criando uma ligação entre as duas tabelas).
+Fact tables are tables that store the history of business events, such as sales or transactions, and typically have a date column. They connect to dimension tables through **foreign keys** (a field in one table that refers to the primary key of another table, creating a link between the two tables).
 
-As tabelas dimensão complementam as informações das tabelas fato,
-fornecendo detalhes como nomes de produtos ou locais. Elas usam **chaves
-primárias** (campo único em uma tabela que identifica de forma exclusiva
-cada registro, garantindo que não haja duplicatas).
+Dimension tables complement the information in fact tables by providing details such as product names or locations. They use **primary keys** (a unique field in a table that uniquely identifies each record, ensuring there are no duplicates).
 
-Juntas, essas tabelas permitem análises detalhadas, ligando o histórico
-de eventos às suas descrições.
+Together, these tables enable detailed analysis by linking the history of events to their descriptions.
 
-#  Conhecendo os Dados do Projeto
+# Understanding the Project Data
 
-Vamos agora explorar brevemente os dados que utilizamos neste projeto.
-Os arquivos exportados são organizados em uma pasta específica, contendo
-dados relativos a três anos: 2022, 2023 e 2024. Cada arquivo segue uma
-convenção de nomenclatura que facilita a identificação dos lançamentos
-por ano e tipo de conta contábil. Por exemplo, o arquivo
-fLancamento1_ano1 contém todos os lançamentos relacionados às contas
-contábeis do tipo 01.xx.xx para o ano 2022, enquanto fLancamento2_ano2
-se refere às contas do tipo 02.xx.xx para o ano 2023, e assim por
-diante.02.xx.xx e assim por diante.
+Let's now briefly explore the data used in this project. The exported files are organized in a specific folder, containing data for three years: 2022, 2023, and 2024. Each file follows a naming convention that facilitates identifying the entries by year and type of account. For example, the file `fLancamento1_ano1` contains all entries related to account types 01.xx.xx for the year 2022, while `fLancamento2_ano2` refers to accounts of type 02.xx.xx for the year 2023, and so on.
 
-![](media/image1.png)
+![Image](media/image1.png)
 
-Para ilustrar melhor, aqui estão as principais tabelas utilizadas no
-projeto:´
+To better illustrate, here are the main tables used in the project:
 
-**Tabela: dEstruturaDRE**
+**Table: dEstruturaDRE**
 
-**Tipo: Dimensão**
+**Type: Dimension**
 
--   **id:** Identificador único que combina um código de grupo com o
-    número da conta gerencial.
+-   **id:** Unique identifier that combines a group code with the managerial account number.
 
--   **index:** Índice numérico que define a ordem sequencial das contas
-    gerenciais.
+-   **index:** Numeric index that defines the sequential order of managerial accounts.
 
--   **contaGerencial:** Nome da conta gerencial que descreve tipos
-    específicos de receitas, despesas ou resultados.
+-   **contaGerencial:** Name of the managerial account that describes specific types of income, expenses, or results.
 
--   **subtotal:** Indicador que sinaliza se a linha representa um
-    subtotal ou valor final de cálculo.
+-   **subtotal:** Indicator that signals whether the row represents a subtotal or final calculated value.
 
--   **empresa:** Nome da empresa ou localidade à qual os dados
-    financeiros se referem.
+-   **empresa:** Name of the company or location to which the financial data refers.
 
-**Tabela: dPlanoConta**
+**Table: dPlanoConta**
 
-**Tipo: Dimensão**
+**Type: Dimension**
 
--   **id:** Identificador único que combina o código hierárquico com o
-    número da linha específica da descrição.
+-   **id:** Unique identifier that combines the hierarchical code with the specific row number of the description.
 
--   **index:** Índice numérico que define a ordem sequencial dos itens
-    dentro da descrição.
+-   **index:** Numeric index that defines the sequential order of items within the description.
 
--   **descricaoN1:** Descrição de nível 1 que especifica o tipo geral de
-    transação ou categoria.
+-   **descricaoN1:** Level 1 description that specifies the general type of transaction or category.
 
--   **descricaoN2:** Descrição de nível 2 que fornece um detalhamento
-    adicional ou mais específico da transação.
+-   **descricaoN2:** Level 2 description that provides further or more specific detail of the transaction.
 
--   **detalharN2:** Indicador binário que mostra se há um detalhamento
-    adicional (0 para não detalhar, 1 para detalhar).
+-   **detalharN2:** Binary indicator that shows whether there is additional detail (0 for no detail, 1 for detail).
 
--   **mascaraDRE_id:** Referência ao identificador na máscara da DRE,
-    associando a linha a uma categoria específica da DRE.
+-   **mascaraDRE_id:** Reference to the DRE mask identifier, associating the row with a specific DRE category.
 
--   **tipoLancamento:** Tipo de lançamento que indica a natureza da
-    transação, com valores como 1 para adição e -1 para subtração.
+-   **tipoLancamento:** Type of entry that indicates the nature of the transaction, with values like 1 for addition and -1 for subtraction.
 
-**Tabela: fOrcamento**
+**Table: fOrcamento**
 
-**Tipo: Fato**
+**Type: Fact**
 
--   **competencia_data:** Data de competência que indica o período a que
-    a transação ou valor se refere.
+-   **competencia_data:** Competency date indicating the period to which the transaction or value refers.
 
--   **planoContas_id:** Identificador da conta no plano de contas, que
-    associa o valor a uma categoria específica dentro da contabilidade.
+-   **planoContas_id:** Account plan identifier that associates the value with a specific category within the accounting.
 
--   **valor:** Valor monetário registrado para a transação ou conta
-    específica na data de competência indicada.
+-   **valor:** Monetary value recorded for the specific transaction or account on the indicated competency date.
 
-**Tabela: fPrevisao**
+**Table: fPrevisao**
 
-**Tipo: Fato**
+**Type: Fact**
 
--   **competencia_data:** Data de competência que indica o período
-    contábil ao qual os valores registrados se referem.
+-   **competencia_data:** Competency date indicating the accounting period to which the recorded values refer.
 
--   **planoContas_id:** Identificador da conta no plano de contas, que
-    classifica a natureza da transação ou item contábil.
+-   **planoContas_id:** Account plan identifier that classifies the nature of the transaction or accounting item.
 
--   **valor:** Quantia monetária associada à conta específica na data de
-    competência indicada.
+-   **valor:** Monetary amount associated with the specific account on the indicated competency date.
 
-**Tabelas: fLancamento1_ano1 / fLancamento2_ano1 / fLancamento3_ano1**
+**Tables: fLancamento1_ano1 / fLancamento2_ano1 / fLancamento3_ano1**
 
-**Tipo: Fato**
+**Type: Fact**
 
--   **competencia_data:** Data de competência que indica o período
-    contábil ao qual os valores registrados se referem.
+-   **competencia_data:** Competency date indicating the accounting period to which the recorded values refer.
 
--   **planoContas_id:** Identificador da conta no plano de contas, que
-    classifica a natureza da transação ou item contábil.
+-   **planoContas_id:** Account plan identifier that classifies the nature of the transaction or accounting item.
 
--   **valor:** Quantia monetária associada à conta específica na data de
-    competência indicada.
+-   **valor:** Monetary amount associated with the specific account on the indicated competency date.
 
-# Criando o ambiente virtual
+# Creating the Virtual Environment
 
-Criar um ambiente virtual é essencial para isolar os pacotes usados em
-um projeto, garantindo que as versões das bibliotecas sejam consistentes
-e evitando o famoso problema de compatibilidade \"mas na minha máquina
-funciona\". Ao final do projeto, é gerado um arquivo requirements.txt,
-que lista todas as bibliotecas instaladas naquele ambiente. Isso permite
-que o script seja executado em qualquer ambiente de forma consistente,
-desde que o requirements.txt seja utilizado.
+Creating a virtual environment is essential to isolate the packages used in a project, ensuring that library versions are consistent and avoiding the notorious "works on my machine" problem. At the end of the project, a `requirements.txt` file is generated, listing all the libraries installed in that environment. This allows the script to be executed in any environment consistently, as long as the `requirements.txt` is used.
 
-Para criar o ambiente virtual, vou usar o PowerShell do Windows. Aqui
-estão os passos que sigo:
+To create the virtual environment, I use Windows PowerShell. Here are the steps I follow:
 
-**Navego até a Pasta do Projeto:**
+**Navigate to the Project Folder:**
 
--   Primeiro, navego até a pasta onde meu projeto está localizado. Para
-    isso, uso o comando cd seguido pelo caminho da pasta do projeto.
+-   First, I navigate to the folder where my project is located. To do this, I use the `cd` command followed by the project folder path.
 
--   Em seguida, executo o seguinte comando para criar o ambiente virtual
+-   Then, I run the following command to create the virtual environment.
 
--   Substituo \"nome_do_ambiente\" pelo nome que quero dar ao ambiente
-    virtual.
+-   I replace `"environment_name"` with the name I want to give the virtual environment.
 
-![](media/image2.png)
+![Image](media/image2.png)
 
-Agora, todos os pacotes que eu instalar estarão isolados nesse ambiente.
+Now, all the packages I install will be isolated in this environment.
 
-**[Caso Enfrente Problemas com Execução de Comandos
-Python:]{.underline}**
+**[If You Face Issues Running Python Commands:](#)**
 
-Se eu não conseguir executar comandos Python no PowerShell, pode ser
-necessário adicionar o Python às variáveis de ambiente do Windows. Para
-fazer isso:
+If I can't run Python commands in PowerShell, it may be necessary to add Python to the Windows environment variables. To do this:
 
--   Digito \"variáveis\" na barra de busca do Windows e seleciono
-    \"Editar as variáveis de ambiente do sistema\".
+-   I type "variables" in the Windows search bar and select "Edit the system environment variables."
 
-![](media/image3.png)
+![Image](media/image3.png)
 
--   Na janela que aparece, clico em \"Variáveis de ambiente\...\".
+-   In the window that appears, I click "Environment Variables..."
 
-E a seguir em "Editar\..."
+And then "Edit..."
 
-![](media/image4.png)
+![Image](media/image4.png)
 
-Por último, clico em \"Novo\" e adiciono o caminho onde o Python está
-instalado no meu computador
+Lastly, I click "New" and add the path where Python is installed on my computer.
 
-![](media/image5.png)
+![Image](media/image5.png)
 
-# Instalando as bibliotecas necessárias
+# Installing Required Libraries
 
-Agora vou instalar as bibliotecas necessárias para realizar o processo
-de ETL. Para isso, utilizo o Jupyter Notebook ou Jupyter Lab como IDE,
-que são as telas onde escrevo e executo meus códigos. Além disso,
-preciso do pandas, uma biblioteca poderosa para manipulação de dados, e
-do pyodbc, que vou usar para me conectar a uma instância de SQL Server.
-Conforme o projeto avança, vou instalando outras bibliotecas conforme
-necessário.
+Now I will install the libraries needed to perform the ETL process. For this, I use Jupyter Notebook or Jupyter Lab as the IDE, which are the interfaces where I write and run my code. Additionally, I need `pandas`, a powerful data manipulation library, and `pyodbc`, which I will use to connect to a SQL Server instance. As the project progresses, I will install other libraries as needed.
 
-Para instalar uso os comandos:
+To install, I use the following commands:
 
-![](media/image6.png)
+![Image](media/image6.png)
 
-![](media/image7.png)
+![Image](media/image7.png)
 
-# Configurando o Jupyter Notebook
+# Configuring Jupyter Notebook
 
-Uma IDE, ou *Integrated Development Environment* (Ambiente de
-Desenvolvimento Integrado), é uma ferramenta que combina diferentes
-recursos, como um editor de código, depurador e terminal, para facilitar
-o desenvolvimento de software. No caso do Jupyter Notebook, a interface
-web atua como a IDE onde escrevo e executo meus códigos.
+An IDE, or Integrated Development Environment, is a tool that combines different features such as a code editor, debugger, and terminal to facilitate software development. In the case of Jupyter Notebook, the web interface acts as the IDE where I write and run my code.
 
-Para abrir o Jupyter Notebook, uso o comando:
+To open Jupyter Notebook, I use the command:
 
-![](media/image8.png)
+![Image](media/image8.png)
 
-Após a execução, o terminal me mostra duas URLs onde posso acessar o
-Jupyter Notebook, além de abrir automaticamente um bloco de notas com a
-URL padrão. Para abrir o Jupyter Notebook, normalmente preciso copiar
-essa URL e colar no navegador.
+After execution, the terminal shows me two URLs where I can access Jupyter Notebook, in addition to automatically opening a notebook with the default URL. To open Jupyter Notebook, I usually need to copy this URL and paste it into the browser.
 
-![](media/image9.png)
+![Image](media/image9.png)
 
-![](media/image10.png)
+![Image](media/image10.png)
 
-![](media/image11.png)
+![Image](media/image11.png)
 
-No entanto, prefiro automatizar esse processo para que o Jupyter
-Notebook abra diretamente no Google Chrome, que é o navegador que estou
-usando. Para isso, no PowerShell, executo um comando para gerar o
-arquivo de configurações do Jupyter. Esse arquivo é criado na pasta
-.jupyter, que no meu caso está localizada em C:\\Users\\oscar\\.jupyter.
+However, I prefer to automate this process so that Jupyter Notebook opens directly in Google Chrome, which is the browser I'm using. To do this, in PowerShell, I run a command to generate the Jupyter configuration file. This file is created in the `.jupyter` folder, which in my case is located at `C:\Users\oscar\.jupyter`.
 
-![](media/image12.png)
+![Image](media/image12.png)
 
-Para editar o arquivo de configuração, abro-o com o Bloco de Notas.
+To edit the configuration file, I open it with Notepad.
 
-![](media/image13.png)
+![Image](media/image13.png)
 
-Uma vez aberto, uso Ctrl + F para procurar o seguinte texto:
-c.ServerApp.browser.
+Once open, I use `Ctrl + F` to search for the following text: `c.ServerApp.browser`.
 
-![](media/image14.png)
+![Image](media/image14.png)
 
-Em seguida, removo o comentário (símbolo #) e coloco entre aspas simples
-(\' \') o caminho onde o Chrome está instalado na minha máquina. No meu
-caso, o Chrome está em "C:\\Program Files\\Google\\Chrome.exe". Depois
-disso, salvo o arquivo e executo o Jupyter Notebook novamente.
+Then, I remove the comment (symbol `#`) and enclose in single quotes (`' '`) the path where Chrome is installed on my machine. In my case, Chrome is located at `"C:\Program Files\Google\Chrome.exe"`. After that, I save the file and run Jupyter Notebook again.
 
-**[Atenção]{.underline}:** Ao copiar o caminho do Chrome, troquei as
-barras invertidas (\\) por barras duplas (\\\\), ou troque por barras
-normais (/). Além disso, adicione um espaço e \'%s\' após o caminho
-entre aspas duplas. Por exemplo:
+**[Note:](#)** When copying the Chrome path, I replaced the backslashes (`\`) with double backslashes (`\\`), or you can replace them with forward slashes (`/`). Additionally, add a space and `'%s'` after the path in double quotes. For example:
 
-![](media/image15.png)
+![Image](media/image15.png)
 
-Além disso, verifiquei se o Chrome está nas variáveis de ambiente do
-Windows (pois estou usando Windows).
+Also, I checked if Chrome is in the Windows environment variables (since I'm using Windows).
 
-Depois de seguir esses passos, o Jupyter Notebook abrirá automaticamente
-no Google Chrome.
+After following these steps, Jupyter Notebook will automatically open in Google Chrome.
 
-# Configurando o Jupyter Lab
+# Configuring Jupyter Lab
 
-Outra IDE amplamente utilizada é o Jupyter Lab. Ele oferece algumas
-vantagens significativas em relação ao Jupyter Notebook, como
-colaboração em tempo real, uma barra lateral com um gerenciador de
-arquivos e a capacidade de colapsar células de código, o que melhora
-bastante a legibilidade. Essas funcionalidades tornam o Jupyter Lab uma
-escolha atraente para projetos mais complexos.
+Another widely used IDE is Jupyter Lab. It offers significant advantages over Jupyter Notebook, such as real-time collaboration, a sidebar with a file manager, and the ability to collapse code cells, which greatly improves readability. These features make Jupyter Lab an attractive choice for more complex projects.
 
-Neste projeto específico, vou optar por usar o Jupyter Lab,
-principalmente por suas opções de interface e pela barra lateral, que me
-permitem ter um melhor controle dos arquivos e uma visão mais organizada
-do meu trabalho. Essas ferramentas proporcionam um ambiente de
-desenvolvimento mais eficiente e agradável, especialmente ao lidar com
-múltiplos arquivos e tarefas.
+In this specific project, I will choose to use Jupyter Lab, mainly because of its interface options and the sidebar, which allow me to have better control of the files and a more organized view of my work. These tools provide a more efficient and pleasant development environment, especially when dealing with multiple files and tasks.
 
-Para instalar o Jupyter Lab:
+To install Jupyter Lab:
 
-![](media/image16.png)
+![Image](media/image16.png)
 
-![](media/image17.png)
+![Image](media/image17.png)
 
-Após a instalação é só lançar:
+After installation, just launch it:
 
-![](media/image18.png)
+![Image](media/image18.png)
 
-![](media/image19.png)
+![Image](media/image19.png)
 
-**Usando o ambiente virtual dentro do Jupyter Lab**
+**Using the virtual environment inside Jupyter Lab**
 
-Para usar o ambiente virtual criando nas etapas anteriores preciso
-primeiramente instalar o Kernel do jupyter Lab dentro do ambiente
-virtual para isso:
+To use the virtual environment created in the previous steps, I first need to install the Jupyter Lab kernel within the virtual environment. To do this:
 
-![](media/image20.png)
+![Image](media/image20.png)
 
-![](media/image21.png)
+![Image](media/image21.png)
 
-E agora instalo o ambiente dentro do jupyter lab com o comando:
+And now I install the environment inside Jupyter Lab with the command:
 
-![](media/image22.png)
+![Image](media/image22.png)
 
-![](media/image23.png)
+![Image](media/image23.png)
 
-Feito isso agora basta lançar o jupyter lab e selecionar o ambiente
-virtual dentro da interface, vou em Change Kernel \> e seleciono o
-Kernel recém criado.
+Once this is done, just launch Jupyter Lab and select the virtual environment within the interface. I go to Change Kernel > and select the newly created Kernel.
 
-![](media/image24.png)
+![Image](media/image24.png)
 
-![](media/image25.png)
+![Image](media/image25.png)
 
-Se eu tiver feito tudo certo, no canto direito do notebook consigo ver o
-ambiente virtual em uso no projeto, no meu caso o ambiente virtual que
-criei anteriormente é o venv.
+If I did everything correctly, I can see the virtual environment in use in the project in the top right corner of the notebook; in my case, the virtual environment I created earlier is `venv`.
 
-![](media/image26.png)
+![Image](media/image26.png)
 
-# Conectando no Banco de Dados SQL Server
+# Connecting to the SQL Server Database
 
-Nesta etapa vou me conectar em um banco de dados local (on premises)
-usando a biblioteca pyodbc. No meu caso não vou informar o parâmetro
-DATABASE pois pretendo criar o database atráves do pyodbc.
+In this step, I will connect to a local (on-premises) database using the `pyodbc` library. In my case, I will not provide the DATABASE parameter as I intend to create the database using `pyodbc`.
 
-Sendo assim, vou passar somente o driver e o servidor e vou me conectar
-diretamente na instância master do SQL Server. A seguir vou criar a
-conexão com o banco de dados, criar um cursor e por fim fechar cursor e
-conexão.
+Thus, I will only pass the driver and the server and will connect directly to the SQL Server master instance. Next, I will create the database connection, create a cursor, and finally close the cursor and connection.
 
-O cursor é um objeto do pyodbc que basicamente executa as queries em
-sql. A referência para documentação oficial está no link a seguir:
+The cursor is a `pyodbc` object that basically executes SQL queries. The official documentation reference is at the following link:
 
 <https://learn.microsoft.com/en-us/sql/connect/python/pyodbc/step-3-proof-of-concept-connecting-to-sql-using-pyodbc?view=sql-server-ver16>
 
-Passos:
+Steps:
 
-1 -- Testar a conexão
+1 -- Test the connection
 
-2 -- Criar um cursor
+2 -- Create a cursor
 
-3 -- Fechar cursor e conexão
+3 -- Close the cursor and connection
 
-![](media/image27.png)
+![Image](media/image27.png)
 
-# Primeira Etapa do ETL: Extract
+# First ETL Step: Extract
 
-Chegamos à primeira etapa do nosso processo de ETL, que é a extração dos
-dados para carregá-los em um banco de dados. Com a conexão ao SQL Server
-aberta, o primeiro passo é verificar se o banco de dados necessário já
-existe. Se ele não existir, vou criá-lo. Em seguida, vou verificar se as
-tabelas que preciso carregar já estão presentes no banco de dados; caso
-não estejam, vou criá-las.
+We have reached the first step of our ETL process, which is data extraction to load them into a database. With the SQL Server connection open, the first step is to check if the necessary database already exists. If it doesn't exist, I will create it. Next, I will check if the tables I need to load are already present in the database; if not, I will create them.
 
-Resumo dos passos:
+Summary of steps:
 
-1 -- Verificar se existe um database de nome ETL criado, se não existir
-criá-lo;
+1 -- Check if there is a database named ETL created; if it does not exist, create it;
 
-2 -- Verificar se a tabela que quero carregar existe, se não existir
-criá-la;
+2 -- Check if the table I want to load exists; if not, create it;
 
-3 -- Repetir as etapas para todos os arquivos.
+3 -- Repeat the steps for all files.
 
-1 -- Etapa 1: Verificar se existe um database de nome ETL criado, se não
-existir criá-lo.
+1 -- Step 1: Check if there is a database named ETL created; if it does not exist, create it.
 
-![](media/image28.png)
+![Image](media/image28.png)
 
-![](media/image29.png)
+![Image](media/image29.png)
 
-Após a execução do comando abaixo foi criado um banco de dados de nome
-DRE na instância local do SQL Server. Isso garante que, mesmo que o
-banco de dados seja deletado por engano, o ETL continue sendo executado,
-pois sempre teremos a criação de um database caso ele não exsita.
+After executing the command below, a database named DRE was created in the local SQL Server instance. This ensures that even if the database is accidentally deleted, the ETL will continue to execute, as we will always have the creation of a database if it does not exist.
 
-2 -- Etapa 2: Verificar se a tabela que quero carregar existe, se não
-existir criá-la.
+2 -- Step 2: Check if the table I want to load exists; if not, create it.
 
-Nesta etapa vou precisar instalar o sql alchemy para poder ler a tabela
-e criá-la automaticamente no banco de dados caso ela não exista, para
-isso utilizarei um método do pandas chamdado to_sql.
+In this step, I will need to install `sqlalchemy` to read the table and automatically create it in the database if it does not exist. For this, I will use a pandas method called `to_sql`.
 
-Instalando o sql alchemy e importando a função create_engine
+Installing `sqlalchemy` and importing the `create_engine` function:
 
-![](media/image30.png)
+![Image](media/image30.png)
 
-![](media/image31.png)
+![Image](media/image31.png)
 
-![](media/image32.png)
+![Image](media/image32.png)
 
-![](media/image33.png)
+![Image](media/image33.png)
 
-Primeiro criei a string de conexão parecida com aquela criada
-anteriormente no pyodbc.
+First, I created the connection string similar to the one created earlier in `pyodbc`.
 
-Após isso criei o engine que é o objeto do sql alchemy que se conecta ao
-Sql Server e após ler o arquivo utilizei o método do pandas to_sql para
-inserir a tabela lida diretamente no banco de dados, o parametro
-if_exists = 'replace' a cada execução substitui os dados já
-preexistente.
+After that, I created the engine, which is the `sqlalchemy` object that connects to SQL Server, and after reading the file, I used the pandas `to_sql` method to insert the read table directly into the database. The `if_exists = 'replace'` parameter replaces the already existing data with each execution.
 
-Como podemos ver na imagem a seguir a tabela foi carregada porém trouxe
-várias linhas em branco. Na etapa de extração não vou me preocupar com o
-tratamento e transformações de dados e tabelas, deixarei isso para a
-etapa 2 do ETL: Transform.
+As we can see in the following image, the table was loaded but brought several blank rows. In the extraction step, I will not worry about data and table transformation; I will leave that for Step 2 of the ETL: Transform.
 
-![](media/image34.png)
+![Image](media/image34.png)
 
-3 -- **Etapa 3**: Repetir as etapas para todos os arquivos. Nesta etapa
-vou carregar todas as tabelas que existem dentro da pasta.
+3 -- **Step 3**: Repeat the steps for all files. In this step, I will load all the tables that exist within the folder.
 
-Para isto vou percorrer todos os arquivos através de um loop for e
-carregar os arquivos csv no banco de dados.
+To do this, I will loop through all the files and load the CSV files into the database.
 
-![](media/image35.png)
+![Image](media/image35.png)
 
-Como podemos ver na imagem a seguir todos os arquivos csv foram
-carregados no banco de dados DRE.
+As we can see in the following image, all the CSV files were loaded into the DRE database.
 
-![](media/image36.png)
+![Image](media/image36.png)
 
-Para tornar o código mais organizado e fácil de manter, vou encapsular
-todas as etapas de extração de dados dentro de uma função chamada
-extract(). Isso não apenas melhora a clareza e a reutilização do código,
-mas também permite que algumas etapas sejam dinamicamente configuradas
-por meio de parâmetros, tornando o processo mais
-flexível.![](media/image37.png)
+To make the code more organized and easier to maintain, I will encapsulate all the data extraction steps within a function called `extract()`. This not only improves code clarity and reusability but also allows some steps to be dynamically configured through parameters, making the process more flexible.
 
-![](media/image38.png)
+![Image](media/image37.png)
 
-# Segunda Etapa do ETL: Transform
+![Image](media/image38.png)
 
-A segunda etapa do ETL é a etapa de transformação dos dados.
+# Second ETL Step: Transform
 
-Nesta etapa vou verificar a tipagem dos dados, tratas valores nulos e
-realizar transformações quando necessário.
+The second step of ETL is data transformation.
 
-Vou usar como referência as transformações aplicadas no Power Query e
-replicá-las no Jupyter Lab. Por fim, encapsular todas as etapas dentro
-de uma função e prosseguir com a próxima etapa: Load.
+In this step, I will check the data types, handle null values, and perform transformations when necessary.
 
-Vou começar pela tabela dEstruturaDRE. As etapas aplicadas foram as
-seguintes:
+I will use the transformations applied in Power Query as a reference and replicate them in Jupyter Lab. Finally, I will encapsulate all the steps within a function and proceed to the next step: Load.
 
-![](media/image39.png)
+I will start with the `dEstruturaDRE` table. The applied steps were as follows:
 
-1 -- **Promoted Headers**: Foi usada a primeira linha como cabeçalho.
-Vou pular esta etapa pois os dados já foram carregados com o cabeçalho
-correto.
+![Image](media/image39.png)
 
-2 -- **Changed Type**: Mostra como foi definida a tipagem dos dados.
+1 -- **Promoted Headers**: The first row was used as the header. I will skip this step because the data was already loaded with the correct header.
 
-![](media/image40.png)
+2 -- **Changed Type**: Shows how the data types were defined.
 
-3 -- **Renamed Columns**: As colunas foram renomeadas para o Inglês.
+![Image](media/image40.png)
 
-![](media/image41.png)
+3 -- **Renamed Columns**: The columns were renamed to English.
 
-4 -- **Filtered Rows**: Aqui foram tratados os valores nulos filtrando a
-coluna id diferente de nulo e vazio.
+![Image](media/image41.png)
 
-![](media/image42.png)
+4 -- **Filtered Rows**: Here, null values were handled by filtering the `id` column to exclude null and empty values.
 
-Agora vou aplicar as mesmas transformações no pandas:
+![Image](media/image42.png)
 
-![](media/image43.png)
+Now I will apply the same transformations in pandas:
 
-![](media/image44.png)
+![Image](media/image43.png)
 
-**Tabela dPlanoConta**:
+![Image](media/image44.png)
 
-![](media/image45.png)
+**Table `dPlanoConta`:**
 
-1 -- **Promoted Headers**: Como feito anteriormente, vou pular esta
-etapa.
+![Image](media/image45.png)
 
-2 -- **Changed Type**: Tipagem dos dados como na imagem a seguir:
+1 -- **Promoted Headers**: As done earlier, I will skip this step.
 
-![](media/image46.png)
+2 -- **Changed Type**: Data typing as in the following image:
 
-3 -- **FilteredRows1**: Remoção de valores nulos.
+![Image](media/image46.png)
 
-4 -- **Renamed Columns** : Colunas renomeadas do português para o
-inglês.
+3 -- **FilteredRows1**: Removal of null values.
 
-![](media/image47.png)
+4 -- **Renamed Columns**: Columns renamed from Portuguese to English.
 
-Aplicando as mesmas transformações no pandas:
+![Image](media/image47.png)
 
-![](media/image48.png)
+Applying the same transformations in pandas:
 
-![](media/image49.png)
+![Image](media/image48.png)
 
-**Tabela fOrcamento**:
+![Image](media/image49.png)
 
-![](media/image50.png)
+**Table `fOrcamento`:**
 
-1 -- **Promoted Headers**: Etapa não necessária.
+![Image](media/image50.png)
 
-2 -- **Changed Type**: Tipagem dos dados como segue:
+1 -- **Promoted Headers**: Step not necessary.
 
-![](media/image51.png)
+2 -- **Changed Type**: Data typing as follows:
 
-3 -- **Renamed Columns**: Renomear as colunas como segue:
+![Image](media/image51.png)
 
-![](media/image52.png)
+3 -- **Renamed Columns**: Rename the columns as follows:
 
-4 -- **Change Type with Locale** : Alterar a data de acordo com a data
-local.
+![Image](media/image52.png)
 
-Aplicando as transformações no pandas:
+4 -- **Change Type with Locale**: Change the date according to the local date.
 
-![](media/image53.png)
+Applying the transformations in pandas:
 
-![](media/image54.png)
+![Image](media/image53.png)
 
-**Tabela fPrevisao**
+![Image](media/image54.png)
 
-![](media/image55.png)
+**Table `fPrevisao`**
 
-1 -- **Promoted Headers**: Pulei esta etapa pois o pandas leu
-corretamente.
+![Image](media/image55.png)
 
-2 -- **Changed Type**:Tipagem dos dados conforme abaixo:
+1 -- **Promoted Headers**: I skipped this step because pandas read it correctly.
 
-![](media/image56.png)
+2 -- **Changed Type**: Data typing as follows:
 
-3 -- **Renamed Columns**: Renomear colunas como segue:
+![Image](media/image56.png)
 
-![](media/image57.png)
+3 -- **Renamed Columns**: Rename columns as follows:
 
-4 -- **Changed Type with Locale**: Mudar a data para data local.
+![Image](media/image57.png)
 
-Aplicando as transformações no pandas tiver um erro.
+4 -- **Changed Type with Locale**: Change the date to the local format.
 
-**Resolvendo Erro ao Converter Valores Numéricos de Texto para Float**
+Applying the transformations in pandas, I encountered an error.
 
-**O Problema:**
+**Resolving Error When Converting Numeric Text Values to Float**
 
-Os valores estavam com os separadores decimais como "." (ponto), mas
-em Python, o ponto é o separador decimal padrão. No entanto, a presença
-de múltiplos pontos em valores numéricos levou a erros na conversão.
+**The Problem:**
 
-![](media/image58.png)
+The values had decimal separators as "." (period), but in Python, the period is the default decimal separator. However, the presence of multiple periods in numeric values led to conversion errors.
 
-**A Solução:**
+![Image](media/image58.png)
 
-Para resolver isso, precisei substituir o último ponto (que separa as
-casas decimais) por um caractere provisório, como "#". Depois, substituí
-os outros pontos por uma string vazia (""), e finalmente, troquei o "#"
-de volta para ".", permitindo que o Python reconhecesse corretamente o
-separador decimal.
+**The Solution:**
 
-Usei a função apply junto com uma função lambda, aplicando o método
-rpartition para realizar essa substituição. O rpartition divide uma
-string em três partes com base no último separador encontrado. Isso é
-útil porque me permite identificar e manipular o separador decimal
-corretamente.
+To solve this, I needed to replace the last period (which separates the decimal places) with a temporary character, such as `#`. Then, I replaced the other periods with an empty string (`""`), and finally, I changed the `#` back to `.` so that Python correctly recognized the decimal separator.
 
-**Exemplo do rpartition:**
+I used the `apply` function along with a lambda function, applying the `rpartition` method to perform this replacement. `rpartition` splits a string into three parts based on the last separator found. This is useful because it allows me to correctly identify and manipulate the decimal separator.
 
-Quando apliquei o rpartition, ele divide a string no último ponto, como
-mostrado abaixo:
+**Example of `rpartition`:**
 
-![](media/image59.png)
+When I applied `rpartition`, it split the string at the last period, as shown below:
 
-**Outro Desafio:**
+![Image](media/image59.png)
 
-Notei que alguns valores inteiros no dataset não estavam no formato
-xxx.00, por exemplo, o número 987. Se não tratasse esse caso, esses
-números inteiros poderiam ser mal interpretados como decimais durante a
-conversão, causando
-erros.
+**Another Challenge:**
 
-![](media/image60.png)
+I noticed that some integer values in the dataset were not in the format `xxx.00`; for example, the number 987. If I did not address this case, these integer numbers could be misinterpreted as decimals during conversion, causing errors.
 
-Pois na hora de somar os números inteiros virariam valores decimais como
-mostrado abaixo:
+![Image](media/image60.png)
 
-![](media/image61.png)
+Because when adding the integer numbers, they would become decimal values as shown below:
 
-**A Solução para Valores Inteiros:**
-Apliquei uma regra para formatar números inteiros como xxx.00 antes de
-realizar as substituições, garantindo que a conversão para float fosse
-precisa.
+![Image](media/image61.png)
 
-![](media/image62.png)
+**The Solution for Integer Values:**
+I applied a rule to format integer numbers as `xxx.00` before making the replacements, ensuring that the conversion to float was accurate.
 
-Aplicando as etapas no pandas ficaria assim:
+![Image](media/image62.png)
 
-![](media/image63.png)
+Applying the steps in pandas would look like this:
 
-Basicamente, o rpartition divide a string em uma tupla, e com o slicing
-\[::2\], pego todos os elementos da tupla, ignorando o separador
-decimal. Depois, uso join para concatenar o caractere provisório \# com
-as outras partes da tupla. Finalmente, faço as substituições necessárias
-para que o Python possa converter corretamente para float.
+![Image](media/image63.png)
 
-**Tabelas fLancamentos**
+Basically, `rpartition` splits the string into a tuple, and with slicing `[::2]`, I take all the elements of the tuple, ignoring the decimal separator. Then, I use `join` to concatenate the temporary character `#` with the other parts of the tuple. Finally, I make the necessary replacements so that Python can correctly convert to float.
 
-![](media/image64.png)
+**`fLancamentos` Tables**
 
-Para as tabelas fLancamentos vou primeiramente tratar uma e como elas
-têm todas as mesma estrutura, basta replicar o mesmo tratamento para as
-demais através de um loop for.
+![Image](media/image64.png)
 
-Os principais tratamentos são:
+For the `fLancamentos` tables, I will first treat one, and since they all have the same structure, I can replicate the same treatment for the others through a `for` loop.
 
-1 -- **Changes Type**: Tipagem dos dados;
+The main treatments are:
 
-![](media/image65.png)
+1 -- **Changes Type**: Data typing;
 
-2 -- **Renamed Columns**: Renomear as colunas
+![Image](media/image65.png)
 
-![](media/image66.png)
+2 -- **Renamed Columns**: Rename the columns
 
-3 -- **Filtered Rows1**: Remover os nulos
+![Image](media/image66.png)
 
-4 -- **Changed Type with Locale**: Alterar a data de acordo com o
-formato local.
+3 -- **Filtered Rows1**: Remove null values
 
-Realizando os mesmos passos no pandas:
+4 -- **Changed Type with Locale**: Change the date according to the local format.
 
-![](media/image67.png)
+Performing the same steps in pandas:
 
-![](media/image68.png)
+![Image](media/image67.png)
 
-**Automatizando o tratamento**
+![Image](media/image68.png)
 
-Após realizar o tratamento em todas as tabelas, vou criar uma função que
-encapsule todas as etapas de tratamento e transformação dos dados.
+**Automating the Treatment**
 
-A grande vantagem dessa abordagem é a facilidade de manutenção: se novas
-tabelas forem adicionadas à pasta, basta incluir o tratamento específico
-para essa tabela dentro da função.
+After performing the treatment on all tables, I will create a function that encapsulates all the data treatment and transformation steps.
 
-Além disso, para tornar a função mais dinâmica, permitirei que o usuário
-informe qualquer caminho de pasta. Isso garante que, se os arquivos
-mudarem de local, o processo de ETL não será afetado.
+The great advantage of this approach is ease of maintenance: if new tables are added to the folder, just include the specific treatment for that table within the function.
 
-![](media/image69.png)
+Additionally, to make the function more dynamic, I will allow the user to specify any folder path. This ensures that if the files change location, the ETL process will not be affected.
 
-A função completa pode ser vista no dentro do arquivo ETL_DRE.py
+![Image](media/image69.png)
 
-Basicamente a função percorre todos os arquivos em uma pasta e de acordo
-com o nome realiza o tratamento necessário. Após o tratamento as tabelas
-são inseridas em uma lista e retornadas pela função.
+The complete function can be seen in the `ETL_DRE.py` file.
 
-# Terceira Etapa do ETL: Load
+Basically, the function loops through all the files in a folder and performs the necessary treatment according to the name. After the treatment, the tables are inserted into a list and returned by the function.
 
-A última etapa do ETL é o carregamento dos dados. Nesta etapa criei uma
-função que carrega os dados tratados e transformados em um database
-informado pelo usuário.
+# Third ETL Step: Load
 
-Os principais passos são:
+The last step of ETL is data loading. In this step, I created a function that loads the treated and transformed data into a database specified by the user.
 
-1 -- Ativar a conexão do banco de dados SQL Server:
+The main steps are:
 
-![](media/image70.png)
+1 -- Activate the SQL Server database connection:
 
-2 -- Tratar os dados:
+![Image](media/image70.png)
 
-![](media/image71.png)
+2 -- Process the data:
 
-3 -- Criar o novo database onde os dados tratados serão armazenados:
+![Image](media/image71.png)
 
-![](media/image72.png)
+3 -- Create the new database where the processed data will be stored:
 
-4 -- Carregar os dados tratados:
+![Image](media/image72.png)
 
-![](media/image73.png)
+4 -- Load the processed data:
 
-5 - Criando a função Load:
+![Image](media/image73.png)
 
-![](media/image74.png)
+5 -- Creating the Load function:
 
-Testando a função:
+![Image](media/image74.png)
 
-![](media/image75.png)
+Testing the function:
 
-# Criando a classe ETL
+![Image](media/image75.png)
 
-Após criar e testar individualmente as funções do ETL, é hora de
-organizar tudo em uma classe. Utilizar uma classe permite estruturar o
-código de forma mais limpa e eficiente, com funções definidas para cada
-tarefa. No caso deste ETL específico, a classe ajuda a evitar a
-redundância de código, como a necessidade de criar várias vezes a mesma
-função de conexão ao banco de dados.
+# Creating the ETL Class
 
-Ao inicializar a classe, a conexão ao banco de dados é estabelecida
-automaticamente e herdada por todos os métodos. Isso não só simplifica o
-código, mas também garante que a conexão seja reutilizada de maneira
-consistente em todas as operações de ETL.
+After creating and individually testing the ETL functions, it is time to organize everything into a class. Using a class allows structuring the code in a cleaner and more efficient way, with functions defined for each task. In this specific ETL, the class helps avoid code redundancy, such as the need to create the same database connection function multiple times.
 
-Outro grande benefício é que posso criar várias instâncias do ETL com
-diferentes servidores e caminhos de pasta. Basta fazer cópias da classe
-e ajustar os parâmetros conforme necessário, tornando o processo
-altamente flexível e reutilizável.
+When initializing the class, the database connection is automatically established and inherited by all methods. This not only simplifies the code but also ensures that the connection is consistently reused in all ETL operations.
 
-A classe completa pode ser vista no arquivo ETL_DRE.py
+Another great benefit is that I can create multiple ETL instances with different servers and folder paths. Simply copy the class and adjust the parameters as needed, making the process highly flexible and reusable.
 
-# Criando o arquivo ETL.py
+The complete class can be seen in the `ETL_DRE.py` file.
 
-Após criada a classe, chegou a hora de criar o arquivo ETL.py que será
-usado para automatizar todo o ETL.
+# Creating the ETL.py File
 
-A criação dele é bastante simples, basta abrir novo Python File e copiar
-as bibliotecas usadas, a classe e executar os métodos do ETL,
-nomeadamente: extract, transform, load.
+After creating the class, it's time to create the `ETL.py` file that will be used to automate the entire ETL.
 
-![](media/image76.png)
+Creating it is quite simple, just open a new Python File and copy the used libraries, the class, and run the ETL methods, namely: `extract`, `transform`, `load`.
 
-![](media/image77.png)
+![Image](media/image76.png)
 
-![](media/image78.png)
+![Image](media/image77.png)
 
-Para executar o arquivo abro o terminal do PowerShell, navego até o
-diretório da pasta, ativo o ambiente virtual e dou o comando abaixo:
+![Image](media/image78.png)
 
-![](media/image79.png)
+To run the file, I open the PowerShell terminal, navigate to the project folder, activate the virtual environment, and use the command below:
 
-Se tudo correr bem o ETL executará todas as etapas. As mensagens
-printadas acima ajudam a entender em qual etapa podem ocorrer eventuais
-erros.
+![Image](media/image79.png)
 
-# Criando o arquivo requirements.txt
+If everything goes well, the ETL will execute all the steps. The printed messages above help to understand where any errors might occur.
 
-Depois de testar o ETL e confirmar que ele está funcionando
-corretamente, é importante garantir que outras pessoas possam reproduzir
-o projeto em suas próprias máquinas. Para isso, vou exportar todas as
-bibliotecas e dependências utilizadas no projeto para um arquivo .txt.
+# Creating the requirements.txt File
 
-Para isso, no terminal do PowerShell navego até a pasta do projeto, e
-digito os comandos abaixo:
+After testing the ETL and confirming that it is working correctly, it is important to ensure that others can reproduce the project on their own machines. To do this, I will export all the libraries and dependencies used in the project to a `.txt` file.
 
-![](media/image80.png)
+To do this, in the PowerShell terminal, I navigate to the project folder and type the following commands:
 
-Isso criará um arquivo requirements.txt no diretório do projeto, que
-contém a lista de todas as bibliotecas e versões específicas usadas.
+![Image](media/image80.png)
 
-Esse arquivo é geralmente incluído nos repositórios do GitHub,
-permitindo que qualquer pessoa que clone o repositório possa facilmente
-recriar o ambiente necessário para executar o ETL em sua máquina local.
-É importante lembrar que alguns parâmetros, como o servidor do banco de
-dados, precisarão ser ajustados de acordo com a configuração individual
-de cada usuário.
+This will create a `requirements.txt` file in the project directory, which contains the list of all the libraries and specific versions used.
 
-![](media/image81.png)
+This file is typically included in GitHub repositories, allowing anyone who clones the repository to easily recreate the environment needed to run the ETL on their local machine. It's important to note that some parameters, such as the database server, will need to be adjusted according to each user's individual setup.
 
-# Automatizando o ETL com o agendador de tarefas do Windows
+![Image](media/image81.png)
 
-Para agendar a execução do ETL mediante o programador de tarefas do
-Windows, seguir os seguintes passos:
+# Automating the ETL with Windows Task Scheduler
 
-1 -- Digitar na busca do Windows a palavra: "agendador de tarefas" ou
-"programador de tarefas" (pt europeu).
+To schedule the ETL execution via Windows Task Scheduler, follow these steps:
 
-![](media/image82.png)
+1 -- Type "Task Scheduler" in the Windows search or "Task Scheduler" (European Portuguese).
 
-2 -- Após abrir o programa clicar em "Criar Tarefa
-Básica":![](media/image83.png)
+![Image](media/image82.png)
 
-3 -- Nomear a tarefa e dar uma breve descrição:
+2 -- After opening the program, click "Create Basic Task":
 
-![](media/image84.png)
+![Image](media/image83.png)
 
-4 -- Escolher a frequência da execução:
+3 -- Name the task and provide a brief description:
 
-![](media/image85.png)
+![Image](media/image84.png)
 
-5 -- Escolher o horário e de quantos em quantos dias repetir:
+4 -- Choose the frequency of execution:
 
-![](media/image86.png)
+![Image](media/image85.png)
 
-6 -- Clicar em iniciar um programa e avançar:
+5 -- Choose the time and how often to repeat:
 
-![](media/image87.png)
+![Image](media/image86.png)
 
-7 -- No ponto 1 colocar o caminho de onde está instalado o arquivo
-python.exe dentro do ambiente virtual usado no projeto. No item 2 será o
-nome do arquivo que será executado e o item 3 é a pasta do projeto.
+6 -- Click "Start a Program" and click next:
 
-![](media/image88.png)
+![Image](media/image87.png)
 
-8 - Pronto! Agora basta clicar em concluir e a tarefa estará agendada.
+7 -- In step 1, enter the path where the `python.exe` file is installed within the virtual environment used in the project. In item 2, enter the name of the file to be executed, and item 3 is the project folder.
 
-![](media/image89.png)
+![Image](media/image88.png)
 
-9 -- Para testar a tarefa, no painel inicial basta clicar na tarefa e
-clicar em executar. Se tudo der certo, um terminal será aberto e um
-script executado.
+8 -- Done! Now just click Finish, and the task will be scheduled.
 
-![](media/image90.png)
+![Image](media/image89.png)
 
-![](media/image91.png)
+9 -- To test the task, on the initial panel, click the task and then click Run. If everything goes well, a terminal will open, and a script will execute.
 
-**Observação**: O programador de tarefas do Windows funciona somente se
-o computador estiver ligado. Então em um cenário onde há um servidor
-local por exemplo que funciona 24 horas por dia, pode ser interessante
-colocar o script para ser executado localmente. Caso contrário há outras
-bibliotecas de agendamento como o scheduler que funcionam mesmo com o
-computador desligado.
+![Image](media/image90.png)
 
-# Conectando Power BI no banco de dados
+![Image](media/image91.png)
 
-Tendo os dados já tratados e transformados no banco de dados, agora só
-nos resta conectar no banco de dados trazendo as tabelas. Para isso:
+**Note**: The Windows Task Scheduler only works if the computer is on. So, in a scenario where there is a local server, for example, that runs 24/7, it might be interesting to run the script locally. Otherwise, there are other scheduling libraries, such as `scheduler`, that work even with the computer off.
 
-1 -- No menu inicial do Power BI, vou em SQL Server
+# Connecting Power BI to the Database
 
-![](media/image92.png)
+With the data already processed and transformed in the database, we just need to connect to the database and bring in the tables. To do this:
 
-2 -- Informo o servidor e o nome do banco de dados. No meu caso o
-servidor é local então coloco localhost e o nome do banco de dados que
-quero acessar é
-DRE_Cleaned.![](media/image93.png)
+1 -- In the Power BI start menu, go to SQL Server.
 
-3 -- Após isso tenho acesso as tabelas do banco de dados.
+![Image](media/image92.png)
 
-![](media/image94.png)
+2 -- Enter the server and database name. In my case, the server is local, so I enter `localhost`, and the database name I want to access is `DRE_Cleaned`.
 
-4 -- Agora basta selecionar e ir para transform data. Teoricamente os
-dados já estão todos tratados e tipados e não precisaríamos acrescentar
-etapas no Power Query, e isto tornaria o carregamento dos dados mais
-rápidos.
+![Image](media/image93.png)
 
-![](media/image95.png)
+3 -- After that, I have access to the database tables.
 
-# Modelagem e Relacionamentos do Modelo
+![Image](media/image94.png)
 
-No projeto, diferentes arquivos CSV estão relacionados entre si,
-formando a base para o modelo de dados. Aqui está uma explicação sobre
-como esses relacionamentos funcionam:
+4 -- Now, just select and go to "Transform Data." Theoretically, the data is already processed and typed, so we wouldn't need to add steps in Power Query, making data loading faster.
 
-**dEstruturaDRE.csv tem um relacionamento 1:\* (um para muitos) com
-dPlanoConta.csv:**
+![Image](media/image95.png)
 
--   Isso significa que cada registro em dEstruturaDRE.csv pode estar
-    relacionado a vários registros em dPlanoConta.csv. Em outras
-    palavras, dEstruturaDRE.csv atua como um filtro para dPlanoConta.csv
-    através do campo id.
+# Modeling and Relationships of the Model
 
-![](media/image96.png)
+In the project, different CSV files are related to each other, forming the basis for the data model. Here is an explanation of how these relationships work:
 
-**dPlanoConta.csv tem um relacionamento 1 :\* com fLancamentos.csv:**
+**`dEstruturaDRE.csv` has a 1:\* (one-to-many) relationship with `dPlanoConta.csv`:**
 
--   Aqui, dPlanoConta.csv também filtra os registros de
-    fLancamentos.csv. Um único registro em dPlanoConta.csv pode estar
-    associado a muitos registros em fLancamentos.csv.
+-   This means that each record in `dEstruturaDRE.csv` can be related to multiple records in `dPlanoConta.csv`. In other words, `dEstruturaDRE.csv` acts as a filter for `dPlanoConta.csv` through the `id` field.
 
-![](media/image97.png)
+![Image](media/image96.png)
 
-**dPlanoConta.csv tem um relacionamento 1:\* com fPrevisao.csv:**
+**`dPlanoConta.csv` has a 1:\* relationship with `fLancamentos.csv`:**
 
--   De maneira similar, dPlanoConta.csv filtra os registros de
-    fPrevisao.csv, onde um registro de dPlanoConta.csv pode corresponder
-    a vários registros em fPrevisao.csv.
+-   Here, `dPlanoConta.csv` also filters the records in `fLancamentos.csv`. A single record in `dPlanoConta.csv` can be associated with many records in `fLancamentos.csv`.
 
-![](media/image98.png)
+![Image](media/image97.png)
 
-**dPlanoConta.csv tem um relacionamento 1: \*com fOrcamento.csv:**
+**`dPlanoConta.csv` has a 1:\* relationship with `fPrevisao.csv`:**
 
--   Novamente, dPlanoConta.csv filtra fOrcamento.csv, com a
-    possibilidade de um registro em dPlanoConta.csv estar associado a
-    vários registros em fOrcamento.csv.
+-   Similarly, `dPlanoConta.csv` filters `fPrevisao.csv`, where a record in `dPlanoConta.csv` can correspond to multiple records in `fPrevisao.csv`.
 
-![](media/image99.png)
+![Image](media/image98.png)
 
-**Modelo Final:**
+**`dPlanoConta.csv` has a 1:\* relationship with `fOrcamento.csv`:**
 
-O modelo de dados resultante é conhecido como **snowflake** (floco de
-neve), onde temos duas tabelas de dimensões normalizadas:
-dPlanoConta.csv e dEstruturaDRE.csv. Diferente do modelo **StarSchema**
-(esquema estrela), onde as tabelas de fatos se conectam diretamente às
-dimensões sem sub-níveis de normalização, o modelo snowflake oferece uma
-estrutura mais detalhada e segmentada.
+-   Again, `dPlanoConta.csv` filters `fOrcamento.csv`, with the possibility of a record in `dPlanoConta.csv` being associated with multiple records in `fOrcamento.csv`.
 
-![](media/image100.png)
+![Image](media/image99.png)
 
-# Análise DRE
+**Final Model:**
 
-A DRE que estou analisando é de uma cadeia de lojas em três estados: São
-Paulo, Rio de Janeiro e Florianópolis. Com isso em mente, pensei em
-algumas perguntas estratégicas que eu faria se fosse o dono do negócio,
-e em como essas questões poderiam ser respondidas visualmente no
-dashboard. As perguntas-chave são:
+The resulting data model is known as a **snowflake**, where we have two normalized dimension tables: `dPlanoConta.csv` and `dEstruturaDRE.csv`. Unlike the **StarSchema** model, where the fact tables connect directly to dimensions without sub-levels of normalization, the snowflake model offers a more detailed and segmented structure.
 
-1.  **Como está o desempenho do grupo?**\
-    (Considerando o grupo como a soma das três lojas.)
+![Image](media/image100.png)
 
-> ![](media/image101.png)
+# Income Statement Analysis
 
-2.  **Como está o desempenho individual de cada loja?**
+The Income Statement I am analyzing is from a chain of stores in three states: São Paulo, Rio de Janeiro, and Florianópolis. With that in mind, I thought of some strategic questions I would ask if I were the business owner, and how these questions could be visually answered in the dashboard. The key questions are:
 
-> ![](media/image102.png)
+1.  **How is the group's performance?**\
+    (Considering the group as the sum of the three stores.)
 
-3.  **Mensalmente, o que foi planejado está sendo atingido ou não?**
+> ![Image](media/image101.png)
 
-> ![](media/image103.png)
+2.  **How is the individual performance of each store?**
 
-4.  **Consigo avaliar como o EBITDA ou outro indicador está variando ao
-    longo dos meses?**
+> ![Image](media/image102.png)
 
-> ![](media/image104.png)
+3.  **Monthly, is what was planned being achieved or not?**
+
+> ![Image](media/image103.png)
+
+4.  **Can I evaluate how EBITDA or another indicator is varying over the months?**
+
+> ![Image](media/image104.png)
 >
-> ![](media/image105.png)
+> ![Image](media/image105.png)
 
-5.  **De tudo o que vendemos, quanto tenho de margem bruta para arcar
-    com as despesas fixas?**
+5.  **Of everything we sold, how much gross margin do I have to cover fixed expenses?**
 
-> ![](media/image106.png)
+> ![Image](media/image106.png)
 
-6.  Uma visão consolidade e que eu possa alterar entre análise
-    horizontal e análise vertical?
+6.  A consolidated view that I can toggle between horizontal and vertical analysis?
 
-![](media/image107.png)
+![Image](media/image107.png)
 
-# Conclusão e Próximos Passos
+# Conclusion and Next Steps
 
-Este projeto demonstrou como a automação do processo de ETL, utilizando
-Python e Power BI, pode transformar a maneira como empresas gerenciam e
-analisam seus dados financeiros. Ao automatizar a extração,
-transformação e carregamento dos dados para uma DRE, conseguimos criar
-uma solução robusta e escalável que não só melhora a eficiência
-operacional, mas também proporciona insights valiosos para a tomada de
-decisões estratégicas.
+This project demonstrated how automating the ETL process using Python and Power BI can transform how companies manage and analyze their financial data. By automating the extraction, transformation, and loading of data for an Income Statement, we were able to create a robust and scalable solution that not only improves operational efficiency but also provides valuable insights for strategic decision-making.
 
-O uso do Jupyter Lab e de uma estrutura de classes no Python facilitou a
-organização e manutenção do código, garantindo que o processo seja
-replicável e adaptável a diferentes contextos e necessidades
-empresariais. Além disso, a modelagem de dados no formato snowflake
-permitiu uma análise detalhada e estruturada das informações, otimizando
-o desempenho das consultas no Power BI.
+Using Jupyter Lab and a class structure in Python facilitated the organization and maintenance of the code, ensuring that the process is replicable and adaptable to different business contexts and needs. Additionally, the snowflake data modeling allowed for detailed and structured information analysis, optimizing query performance in Power BI.
 
--   **Expansão do Dashboard:**\
-    Expandir o dashboard do Power BI para incluir mais KPIs
-    (indicadores-chave de desempenho) que possam ajudar a identificar
-    tendências, como análise de lucratividade por produto ou segmento de
-    mercado.
+-   **Expanding the Dashboard:**\
+    Expand the Power BI dashboard to include more KPIs (key performance indicators) that can help identify trends, such as profitability analysis by product or market segment.
 
-<!-- -->
-
--   **Implementação de Alertas Automatizados:**\
-    Adicionar um sistema de alertas automatizados que notifique o
-    usuário quando determinados indicadores, como EBITDA ou margem
-    bruta, atingirem valores críticos ou fora do esperado.
+-   **Implementing Automated Alerts:**\
+    Add an automated alert system that notifies the user when certain indicators, such as EBITDA or gross margin, reach critical or unexpected values.
