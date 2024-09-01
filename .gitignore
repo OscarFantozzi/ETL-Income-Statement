@@ -1,0 +1,14 @@
+# Ignorar arquivos de sistema
+*.DS_Store
+
+# Ignorar diretório de build
+/build/
+.ipynb_checkpoints/
+venv/
+
+query_manage_connections.sql
+Income_Statement_ETL.docx
+
+
+# Ignorar arquivos de configuração local
+.env
