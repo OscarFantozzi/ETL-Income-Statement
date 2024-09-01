@@ -185,8 +185,7 @@ contábeis do tipo 01.xx.xx para o ano 2022, enquanto fLancamento2_ano2
 se refere às contas do tipo 02.xx.xx para o ano 2023, e assim por
 diante.02.xx.xx e assim por diante.
 
-![](media/image1.png){width="5.905555555555556in"
-height="1.8958333333333333in"}
+![](media/image1.png)
 
 Para ilustrar melhor, aqui estão as principais tabelas utilizadas no
 projeto:´
