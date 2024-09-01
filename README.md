@@ -52,7 +52,7 @@
 
 # What is an Income Statement?
 
-When we talk about business management, the Income Statement (DRE), or *Income Statement* in English, is one of the most crucial reports. After all, every company wants to know if its operations are generating the expected results. While the cash flow shows how much money the company has at a given time, the Income Statement measures operational performance.
+When we talk about business management, the Income Statement is one of the most crucial reports. After all, every company wants to know if its operations are generating the expected results. While the cash flow shows how much money the company has at a given time, the Income Statement measures operational performance.
 
 There are two main types of Income Statements: Accounting and Managerial. In this project, I will focus on the Managerial Income Statement, but first, let's understand the main difference between them.
 
