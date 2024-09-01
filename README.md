@@ -656,14 +656,14 @@ Aplicando as transformações no pandas tiver um erro.
 
 **O Problema:**
 
-**\
-**Os valores estavam com os separadores decimais como "." (ponto), mas
+Os valores estavam com os separadores decimais como "." (ponto), mas
 em Python, o ponto é o separador decimal padrão. No entanto, a presença
 de múltiplos pontos em valores numéricos levou a erros na conversão.
 
 ![](media/image58.png)
 
-**A Solução:**\
+**A Solução:**
+
 Para resolver isso, precisei substituir o último ponto (que separa as
 casas decimais) por um caractere provisório, como "#". Depois, substituí
 os outros pontos por uma string vazia (""), e finalmente, troquei o "#"
@@ -683,19 +683,22 @@ mostrado abaixo:
 
 ![](media/image59.png)
 
-**Outro Desafio:**\
+**Outro Desafio:**
+
 Notei que alguns valores inteiros no dataset não estavam no formato
 xxx.00, por exemplo, o número 987. Se não tratasse esse caso, esses
 números inteiros poderiam ser mal interpretados como decimais durante a
 conversão, causando
-erros.![](media/image60.png)
+erros.
+
+![](media/image60.png)
 
 Pois na hora de somar os números inteiros virariam valores decimais como
 mostrado abaixo:
 
 ![](media/image61.png)
 
-**A Solução para Valores Inteiros:**\
+**A Solução para Valores Inteiros:**
 Apliquei uma regra para formatar números inteiros como xxx.00 antes de
 realizar as substituições, garantindo que a conversão para float fosse
 precisa.
