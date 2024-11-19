@@ -9,8 +9,11 @@ venv/
 /Income Statement (DRE)
 /Income_Statement_ETL.docx
 /Income Statement
-.docx
-.pbix
+*.docx
+*.pbix
+
+/Income Statement/*.docx
+/Income Statement/*.pbix
 
 # Ignorar arquivos de configuração local
 .env
