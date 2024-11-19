@@ -752,6 +752,9 @@ This project demonstrated how automating the ETL process using Python and Power 
 
 Using Jupyter Lab and a class structure in Python facilitated the organization and maintenance of the code, ensuring that the process is replicable and adaptable to different business contexts and needs. Additionally, the snowflake data modeling allowed for detailed and structured information analysis, optimizing query performance in Power BI.
 
+To check the dashboard click on this [link](https://app.powerbi.com/view?r=eyJrIjoiYzc0ZTY5NDQtNDg3OS00MjExLWFjMmQtZTg0ZjYwMDNlMWJkIiwidCI6ImYwZGU2ZTJmLWFiZTgtNGQ1OS05Yzc1LWU4ODdhMTUwN2IxYiIsImMiOjl9)
+
+
 -   **Expanding the Dashboard:**\
     Expand the Power BI dashboard to include more KPIs (key performance indicators) that can help identify trends, such as profitability analysis by product or market segment.
 
