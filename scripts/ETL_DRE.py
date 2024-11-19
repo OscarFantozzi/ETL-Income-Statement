@@ -77,14 +77,20 @@ class ETL:
         print( 'Loading Data:' )
         
         for file in os.listdir( self.file_dir ):
+
+            file = os.path.join( self.file_dir , file )
+
+            table_name = os.path.basename( file )
                 
             if file.endswith( '.csv' ):
                 
                 df = pd.read_csv( file, encoding = 'UTF-8' )
+
+                df['last_update'] = pd.Timestamp.now() 
                 
-                df.to_sql( name = file , con = self.engine , if_exists= 'replace', index = False)
+                df.to_sql( name = table_name , con = self.engine , if_exists= 'replace', index = False)
                 
-                print( f'{ file } has been loaded into database' )
+                print( f'{ table_name } has been loaded into database' )
         
         # close engine connection
         self.engine.dispose()
@@ -326,7 +332,7 @@ class ETL:
 # ========================================================================================================#
 
 server               = 'DESKTOP-U9M4TSR' 
-file_dir             = 'D:/repos/ETL' # the directory of files to be extracted and transformed.
+file_dir             = 'D:/repos/ETL/data' # the directory of files to be extracted and transformed.
 staging_database     = 'DRE'          # the name of database to be created (if none exist) to store raw data
 destination_database = 'DRE_Cleaned'  # the database where cleaned data will be stored
 

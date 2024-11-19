@@ -6,9 +6,9 @@
 .ipynb_checkpoints/
 venv/
 
-query_manage_connections.sql
+Income Statement (DRE)
 Income_Statement_ETL.docx
-
+Income Statement
 
 # Ignorar arquivos de configuração local
 .env
